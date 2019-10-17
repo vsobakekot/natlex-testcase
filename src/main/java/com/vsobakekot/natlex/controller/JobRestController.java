@@ -1,8 +1,8 @@
 package com.vsobakekot.natlex.controller;
 
 import com.vsobakekot.natlex.enums.JobType;
-import com.vsobakekot.natlex.exeptions.ExportErrorResultException;
-import com.vsobakekot.natlex.exeptions.ExportInProgressException;
+import com.vsobakekot.natlex.exсeptions.ExportErrorResultException;
+import com.vsobakekot.natlex.exсeptions.ExportInProgressException;
 import com.vsobakekot.natlex.model.Job;
 import com.vsobakekot.natlex.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.vsobakekot.natlex.exeptions;
+package com.vsobakekot.natlex.exсeptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

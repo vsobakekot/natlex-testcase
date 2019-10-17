@@ -1,6 +1,6 @@
 package com.vsobakekot.natlex.service;
 
-import com.vsobakekot.natlex.exeptions.DataNotFoundException;
+import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;

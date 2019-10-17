@@ -1,6 +1,6 @@
 package com.vsobakekot.natlex.service;
 
-import com.vsobakekot.natlex.exeptions.DataNotFoundException;
+import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
 import com.vsobakekot.natlex.model.Section;
 import com.vsobakekot.natlex.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

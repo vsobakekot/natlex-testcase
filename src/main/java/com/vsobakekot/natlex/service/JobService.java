@@ -2,7 +2,7 @@ package com.vsobakekot.natlex.service;
 
 import com.vsobakekot.natlex.enums.JobResultStatus;
 import com.vsobakekot.natlex.enums.JobType;
-import com.vsobakekot.natlex.exeptions.DataNotFoundException;
+import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
 import com.vsobakekot.natlex.model.GeologicalClass;
 import com.vsobakekot.natlex.model.Job;
 import com.vsobakekot.natlex.model.Section;

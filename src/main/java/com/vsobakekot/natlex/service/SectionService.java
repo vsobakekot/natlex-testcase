@@ -32,7 +32,7 @@ public class SectionService {
     }
 
     public Section getSectionById(Long sectionId) {
-        return sectionRepository.findById(sectionId).orElseThrow(DataNotFoundException::new);
+        return sectionRepository.findById(sectionId).orElseThrow(()->new DataNotFoundException("The section is not found! Wrong section ID!"));
     }
 
     public Section updateSection(Long sectionId, Section newSection) {

@@ -45,7 +45,7 @@ public class JobService {
     }
 
     public Job getJobById(Long jobId) {
-            return jobRepository.findById(jobId).orElseThrow(DataNotFoundException::new);
+            return jobRepository.findById(jobId).orElseThrow(()->new DataNotFoundException("The job is not found! Wrong Job ID!"));
     }
     
     public JobResultStatus getJobStatus(Long jobId) {
@@ -75,7 +75,7 @@ public class JobService {
         newJob.setStatus(JobResultStatus.IN_PROGRESS);
         jobRepository.save(newJob);
 
-        JOB_LOGGER.info("NEW {} JOB #{} STARTED.",newJob.getType(), newJob.getId());
+        JOB_LOGGER.info("{} - NEW {} JOB #{} STARTED.", newJob.getCreatedAt(), newJob.getType(), newJob.getId());
 
         return newJob;
     }

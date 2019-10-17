@@ -45,7 +45,7 @@ public class JobService {
     }
 
     public Job getJobById(Long jobId) {
-            return jobRepository.findById(jobId).orElseThrow(()->new DataNotFoundException("The job is not found! Wrong Job ID!"));
+            return jobRepository.findById(jobId).orElseThrow(()->new DataNotFoundException("The job is not found. Wrong Job ID."));
     }
     
     public JobResultStatus getJobStatus(Long jobId) {

@@ -41,10 +41,10 @@ public class StorageService {
             if(resource.exists()) {
                 return resource;
             } else {
-                throw new DataNotFoundException("File " + fileName + " not found!");
+                throw new DataNotFoundException("File " + fileName + " is not found.");
             }
         } catch (MalformedURLException ex) {
-            throw new DataNotFoundException("File " + fileName + " not found!", ex);
+            throw new DataNotFoundException("File " + fileName + " is not found.", ex);
         }
     }
 }

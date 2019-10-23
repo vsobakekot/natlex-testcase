@@ -6,7 +6,6 @@ import com.vsobakekot.natlex.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,9 +46,7 @@ public class SectionService {
     }
 
     public List<Section> getAllSections() {
-        List<Section> list = new ArrayList<>();
-        sectionRepository.findAll().forEach(list::add);
-        return list;
+        return sectionRepository.findAll();
     }
 
     public List<Section> getAllSectionsByCode(String geologicalClassCode) {

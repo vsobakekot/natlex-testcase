@@ -1,11 +1,11 @@
 package com.vsobakekot.natlex.service;
 
-import com.vsobakekot.natlex.model.enums.JobResultStatus;
-import com.vsobakekot.natlex.model.enums.JobType;
 import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
 import com.vsobakekot.natlex.model.GeologicalClass;
 import com.vsobakekot.natlex.model.Job;
 import com.vsobakekot.natlex.model.Section;
+import com.vsobakekot.natlex.model.enums.JobResultStatus;
+import com.vsobakekot.natlex.model.enums.JobType;
 import com.vsobakekot.natlex.repository.JobRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +37,7 @@ public class JobService {
         this.storageService = storageService;
     }
 
-    public boolean jobExists(Long jobId) {
+    public boolean isExists(Long jobId) {
         return jobRepository.existsById(jobId);
     }
 
@@ -63,9 +62,7 @@ public class JobService {
     }
     
     public List<Job> getAllJobs() {
-        List<Job> list = new ArrayList<>();
-        jobRepository.findAll().forEach(list::add);
-        return list;
+        return jobRepository.findAll();
     }
 
     public Job startNewJob(JobType jobType) {

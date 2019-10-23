@@ -48,7 +48,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || !jobService.isImport(jobId)) {
+        if (!jobService.isExists(jobId) || !jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
@@ -66,7 +66,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || jobService.isImport(jobId)) {
+        if (!jobService.isExists(jobId) || jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
@@ -77,7 +77,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || jobService.isImport(jobId)) {
+        if (!jobService.isExists(jobId) || jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         if (jobService.isDone(jobId)) {

@@ -1,7 +1,7 @@
 package com.vsobakekot.natlex.model;
 
-import com.vsobakekot.natlex.enums.JobResultStatus;
-import com.vsobakekot.natlex.enums.JobType;
+import com.vsobakekot.natlex.model.enums.JobResultStatus;
+import com.vsobakekot.natlex.model.enums.JobType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

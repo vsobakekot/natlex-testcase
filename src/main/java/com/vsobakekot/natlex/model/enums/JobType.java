@@ -1,4 +1,4 @@
-package com.vsobakekot.natlex.enums;
+package com.vsobakekot.natlex.model.enums;
 
 public enum JobType {
     IMPORT,

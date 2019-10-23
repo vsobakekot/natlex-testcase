@@ -1,6 +1,6 @@
 package com.vsobakekot.natlex.controller;
 
-import com.vsobakekot.natlex.enums.JobType;
+import com.vsobakekot.natlex.model.enums.JobType;
 import com.vsobakekot.natlex.exсeptions.ExportErrorResultException;
 import com.vsobakekot.natlex.exсeptions.ExportInProgressException;
 import com.vsobakekot.natlex.model.Job;
@@ -48,7 +48,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || !jobService.jobIsImport(jobId)) {
+        if (!jobService.jobExists(jobId) || !jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
@@ -66,7 +66,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || jobService.jobIsImport(jobId)) {
+        if (!jobService.jobExists(jobId) || jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
@@ -77,16 +77,16 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.jobExists(jobId) || jobService.jobIsImport(jobId)) {
+        if (!jobService.jobExists(jobId) || jobService.isImport(jobId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (jobService.jobIsDone(jobId)) {
+        if (jobService.isDone(jobId)) {
             Resource resource = jobService.downloadXLS(jobId);
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                     .body(resource);
         }
-        if (jobService.jobIsInProgress(jobId)) {
+        if (jobService.isInProgress(jobId)) {
             throw new ExportInProgressException("Export is still in progress now, try again later!");
         }
         throw new ExportErrorResultException("Export job ended with errors, create new export!");

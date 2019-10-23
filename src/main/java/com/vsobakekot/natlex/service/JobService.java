@@ -1,19 +1,18 @@
 package com.vsobakekot.natlex.service;
 
-import com.vsobakekot.natlex.enums.JobResultStatus;
-import com.vsobakekot.natlex.enums.JobType;
+import com.vsobakekot.natlex.model.enums.JobResultStatus;
+import com.vsobakekot.natlex.model.enums.JobType;
 import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
 import com.vsobakekot.natlex.model.GeologicalClass;
 import com.vsobakekot.natlex.model.Job;
 import com.vsobakekot.natlex.model.Section;
 import com.vsobakekot.natlex.repository.JobRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Async;
@@ -25,9 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class JobService {
-
-    private final Logger JOB_LOGGER = LoggerFactory.getLogger(this.getClass());
 
     private final JobRepository jobRepository;
     private final SectionService sectionService;
@@ -52,15 +50,15 @@ public class JobService {
         return getJobById(jobId).getStatus();
     }
 
-    public boolean jobIsDone(Long jobId) {
+    public boolean isDone(Long jobId) {
         return getJobStatus(jobId).equals(JobResultStatus.DONE);
     }
 
-    public boolean jobIsInProgress(Long jobId) {
+    public boolean isInProgress(Long jobId) {
         return getJobStatus(jobId).equals(JobResultStatus.IN_PROGRESS);
     }
 
-    public boolean jobIsImport(Long jobId) {
+    public boolean isImport(Long jobId) {
         return getJobById(jobId).getType().equals(JobType.IMPORT);
     }
     
@@ -75,7 +73,7 @@ public class JobService {
         newJob.setStatus(JobResultStatus.IN_PROGRESS);
         jobRepository.save(newJob);
 
-        JOB_LOGGER.info("{} - NEW {} JOB #{} STARTED.", newJob.getCreatedAt(), newJob.getType(), newJob.getId());
+        log.info("{} - NEW {} JOB #{} STARTED.", newJob.getCreatedAt(), newJob.getType(), newJob.getId());
 
         return newJob;
     }
@@ -87,7 +85,7 @@ public class JobService {
             String importFileName = importJob.getId().toString() + ".xls";
             storageService.storeImportFile(file, importFileName);
 
-            JOB_LOGGER.info("File {} was stored.", importFileName);
+            log.info("File {} was stored.", importFileName);
 
             HSSFWorkbook xlsFile = new HSSFWorkbook(file.getInputStream());
             HSSFSheet sheet = xlsFile.getSheetAt(0);
@@ -122,15 +120,13 @@ public class JobService {
             importJob.setStatus(JobResultStatus.DONE);
             jobRepository.save(importJob);
 
-            JOB_LOGGER.info("Parsing {} was successfully finished. JOB #{} is DONE", importFileName, importJob.getId());
+            log.info("Parsing {} was successfully finished. JOB #{} is DONE", importFileName, importJob.getId());
 
         } catch (Exception e) {
             importJob.setStatus(JobResultStatus.ERROR);
             jobRepository.save(importJob);
 
-            JOB_LOGGER.error("JOB #{} is FAILED.", importJob.getId());
-
-            e.printStackTrace();
+            log.error("JOB #{} is FAILED.", importJob.getId());
         }
     }
 
@@ -176,15 +172,13 @@ public class JobService {
             exportJob.setStatus(JobResultStatus.DONE);
             jobRepository.save(exportJob);
 
-            JOB_LOGGER.info("File {} was successfully generated. JOB #{} is DONE",exportFileName, exportJob.getId());
+            log.info("File {} was successfully generated. JOB #{} is DONE",exportFileName, exportJob.getId());
 
         } catch (Exception e) {
             exportJob.setStatus(JobResultStatus.ERROR);
             jobRepository.save(exportJob);
 
-            JOB_LOGGER.error("JOB #{} is FAILED.", exportJob.getId());
-
-            e.printStackTrace();
+            log.error("JOB #{} is FAILED.", exportJob.getId());
         }
     }
 

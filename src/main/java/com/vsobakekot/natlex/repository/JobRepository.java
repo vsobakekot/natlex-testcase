@@ -6,10 +6,12 @@ import com.vsobakekot.natlex.model.enums.JobType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface JobRepository extends JpaRepository<Job,Long> {
 
-    boolean existsByIdAndType(Long jobId, JobType jobType);
-    boolean existsByIdAndStatus(Long id, JobResultStatus status);
+    Optional<Job> findByIdAndType(Long jobId, JobType jobType);
+    Optional<Job> findByIdAndTypeAndStatus(Long id, JobType type, JobResultStatus status);
 }
 

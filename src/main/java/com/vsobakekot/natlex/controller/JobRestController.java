@@ -1,9 +1,7 @@
 package com.vsobakekot.natlex.controller;
 
-import com.vsobakekot.natlex.model.enums.JobType;
-import com.vsobakekot.natlex.exсeptions.ExportErrorResultException;
-import com.vsobakekot.natlex.exсeptions.ExportInProgressException;
 import com.vsobakekot.natlex.model.Job;
+import com.vsobakekot.natlex.model.enums.JobType;
 import com.vsobakekot.natlex.service.JobService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -27,9 +25,6 @@ public class JobRestController {
 
     @GetMapping
     public ResponseEntity<?> getJobList() {
-        if (jobService.getAllJobs().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(jobService.getAllJobs(), HttpStatus.OK);
     }
 
@@ -48,10 +43,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.isExists(jobId) || !jobService.isImport(jobId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
+        return new ResponseEntity<>(jobService.getJobStatus(jobId, JobType.IMPORT), HttpStatus.OK);
     }
 
     @GetMapping("/export")
@@ -66,10 +58,7 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.isExists(jobId) || jobService.isImport(jobId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(jobService.getJobStatus(jobId), HttpStatus.OK);
+        return new ResponseEntity<>(jobService.getJobStatus(jobId, JobType.EXPORT), HttpStatus.OK);
     }
 
     @GetMapping(value = "/export/{jobId}/file", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -77,18 +66,9 @@ public class JobRestController {
         if (jobId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (!jobService.isExists(jobId) || jobService.isImport(jobId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Resource resource = jobService.downloadXLS(jobId);
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                             .body(resource);
         }
-        if (jobService.isDone(jobId)) {
-            Resource resource = jobService.downloadXLS(jobId);
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        }
-        if (jobService.isInProgress(jobId)) {
-            throw new ExportInProgressException("Export is still in progress now, try again later!");
-        }
-        throw new ExportErrorResultException("Export job ended with errors, create new export!");
-    }
 }

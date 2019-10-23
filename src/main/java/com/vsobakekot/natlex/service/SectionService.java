@@ -18,7 +18,7 @@ public class SectionService {
         this.sectionRepository = sectionRepository;
     }
 
-    public boolean sectionExists(Long sectionId) {
+    public boolean isExists(Long sectionId) {
         return sectionRepository.existsById(sectionId);
     }
 
@@ -27,7 +27,7 @@ public class SectionService {
     }
 
     public Section saveBlankSection(String sectionName){
-        return sectionRepository.save(new Section(sectionName));
+        return saveSection(new Section(sectionName));
     }
 
     public Section getSectionById(Long sectionId) {
@@ -35,10 +35,10 @@ public class SectionService {
     }
 
     public Section updateSection(Long sectionId, Section newSection) {
-        Section sectionToUpdate = getSectionById(sectionId);
-        sectionToUpdate.setName(newSection.getName());
-        sectionToUpdate.setGeologicalClasses(newSection.getGeologicalClasses());
-        return saveSection(sectionToUpdate);
+        return sectionRepository.findById(sectionId).map(section -> {
+            section.setName(newSection.getName());
+            return sectionRepository.save(section);
+        }).orElseThrow(() -> new DataNotFoundException("The section is not found. 0 sections have been updated"));
     }
 
     public void deleteSectionById(Long sectionId) {

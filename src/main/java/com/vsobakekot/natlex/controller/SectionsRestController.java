@@ -23,7 +23,7 @@ public class SectionsRestController {
 
     @PostMapping
     public ResponseEntity<?> createSection(@Valid @RequestBody Section section) {
-        if (sectionService.sectionExists(section.getId())) {
+        if (sectionService.isExists(section.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(sectionService.saveSection(section), HttpStatus.CREATED);
@@ -32,9 +32,6 @@ public class SectionsRestController {
     // add pagination for it (ask)
     @GetMapping
     public ResponseEntity<?> getAllSections() {
-        if (sectionService.getAllSections().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(sectionService.getAllSections(), HttpStatus.OK);
     }
 
@@ -50,9 +47,6 @@ public class SectionsRestController {
     public ResponseEntity<?> updateSection(@PathVariable Long sectionId, @Valid @RequestBody Section newSection) {
         if (sectionId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        if (!sectionService.sectionExists(sectionId)) {
-            return new ResponseEntity<>(sectionService.saveSection(newSection), HttpStatus.CREATED);
         }
         return new ResponseEntity<>(sectionService.updateSection(sectionId,newSection), HttpStatus.OK);
     }

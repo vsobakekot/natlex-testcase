@@ -1,6 +1,8 @@
 package com.vsobakekot.natlex.service;
 
 import com.vsobakekot.natlex.exсeptions.DataNotFoundException;
+import com.vsobakekot.natlex.exсeptions.ExportErrorResultException;
+import com.vsobakekot.natlex.exсeptions.ExportInProgressException;
 import com.vsobakekot.natlex.model.GeologicalClass;
 import com.vsobakekot.natlex.model.Job;
 import com.vsobakekot.natlex.model.Section;
@@ -37,30 +39,12 @@ public class JobService {
         this.storageService = storageService;
     }
 
-    public boolean isExists(Long jobId) {
-        return jobRepository.existsById(jobId);
+    public JobResultStatus getJobStatus(Long jobId, JobType jobType) {
+        return jobRepository.findByIdAndType(jobId,jobType)
+                            .orElseThrow(()-> new DataNotFoundException("The job is not found. Wrong Job ID."))
+                            .getStatus();
     }
 
-    public Job getJobById(Long jobId) {
-            return jobRepository.findById(jobId).orElseThrow(()->new DataNotFoundException("The job is not found. Wrong Job ID."));
-    }
-    
-    public JobResultStatus getJobStatus(Long jobId) {
-        return getJobById(jobId).getStatus();
-    }
-
-    public boolean isDone(Long jobId) {
-        return getJobStatus(jobId).equals(JobResultStatus.DONE);
-    }
-
-    public boolean isInProgress(Long jobId) {
-        return getJobStatus(jobId).equals(JobResultStatus.IN_PROGRESS);
-    }
-
-    public boolean isImport(Long jobId) {
-        return getJobById(jobId).getType().equals(JobType.IMPORT);
-    }
-    
     public List<Job> getAllJobs() {
         return jobRepository.findAll();
     }
@@ -137,29 +121,22 @@ public class JobService {
             HSSFSheet sheet = hssfWorkbook.createSheet("Sections");
 
             HSSFRow headerRow = sheet.createRow(0);
-            HSSFCell headerSectionNameCell = headerRow.createCell(0, CellType.STRING);
-            headerSectionNameCell.setCellValue("Section name");
+            addCellToRow(headerRow,"Section name");
 
             for (Section s : sections) {
                 HSSFRow currentRow = sheet.createRow(sheet.getLastRowNum()+1);
-
-                HSSFCell sectionNameCell = currentRow.createCell(0,CellType.STRING);
-                sectionNameCell.setCellValue(s.getName());
+                addCellToRow(currentRow,s.getName());
 
                 List<GeologicalClass> geologicalClasses = s.getGeologicalClasses();
 
                 for (GeologicalClass gc : geologicalClasses) {
                     if (currentRow.getLastCellNum() == headerRow.getLastCellNum()) {
                         int index = Math.floorDiv(headerRow.getLastCellNum(), 2) + 1;
-                        HSSFCell headerGeologicalClassNameCell = headerRow.createCell(headerRow.getLastCellNum(), CellType.STRING);
-                        headerGeologicalClassNameCell.setCellValue(String.format("Class %d name", index));
-                        HSSFCell headerGeologicalClassCodeCell = headerRow.createCell(headerRow.getLastCellNum(), CellType.STRING);
-                        headerGeologicalClassCodeCell.setCellValue(String.format("Class %d code", index));
+                        addCellToRow(headerRow,String.format("Class %d name", index));
+                        addCellToRow(headerRow,String.format("Class %d code", index));
                     }
-                    HSSFCell geologicalClassNameCell = currentRow.createCell(currentRow.getLastCellNum(),CellType.STRING);
-                    geologicalClassNameCell.setCellValue(gc.getName());
-                    HSSFCell geologicalClassCodeCell = currentRow.createCell(currentRow.getLastCellNum(),CellType.STRING);
-                    geologicalClassCodeCell.setCellValue(gc.getCode());
+                    addCellToRow(currentRow,(gc.getName()));
+                    addCellToRow(currentRow,(gc.getCode()));
                 }
             }
 
@@ -180,7 +157,17 @@ public class JobService {
     }
 
     public Resource downloadXLS(Long jobId) {
-            String fileName = jobId.toString() + ".xls";
-            return storageService.loadFile(fileName);
+        if (getJobStatus(jobId, JobType.EXPORT).equals(JobResultStatus.DONE)) {
+            return storageService.loadFile(jobId.toString() + ".xls");
+        }
+        if (getJobStatus(jobId, JobType.EXPORT).equals(JobResultStatus.IN_PROGRESS)) {
+            throw new ExportInProgressException("Export is still in progress now, try again later!");
+        }
+        throw new ExportErrorResultException("Export job ended with errors, create new export!");
+    }
+
+    private void addCellToRow(HSSFRow row, String value) {
+        HSSFCell newCell = row.createCell(row.getLastCellNum(),CellType.STRING);
+        newCell.setCellValue(value);
     }
 }

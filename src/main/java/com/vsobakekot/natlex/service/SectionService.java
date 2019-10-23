@@ -23,12 +23,12 @@ public class SectionService {
         return sectionRepository.existsById(sectionId);
     }
 
-    public Section saveSection(Section name){
-        return sectionRepository.save(name);
+    public Section saveSection(Section section){
+        return sectionRepository.save(section);
     }
 
-    public Section saveBlankSection(String name){
-        return sectionRepository.save(new Section(name));
+    public Section saveBlankSection(String sectionName){
+        return sectionRepository.save(new Section(sectionName));
     }
 
     public Section getSectionById(Long sectionId) {

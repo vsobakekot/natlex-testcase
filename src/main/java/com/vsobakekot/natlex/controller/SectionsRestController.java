@@ -22,11 +22,11 @@ public class SectionsRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createSection(@Valid @RequestBody Section name) {
-        if (sectionService.sectionExists(name.getId())) {
+    public ResponseEntity<?> createSection(@Valid @RequestBody Section section) {
+        if (sectionService.sectionExists(section.getId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(sectionService.saveSection(name), HttpStatus.CREATED);
+        return new ResponseEntity<>(sectionService.saveSection(section), HttpStatus.CREATED);
     }
 
     // add pagination for it (ask)

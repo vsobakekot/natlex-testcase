@@ -167,7 +167,7 @@ public class JobService {
     }
 
     private void addCellToRow(HSSFRow row, String value) {
-        HSSFCell newCell = row.createCell(row.getLastCellNum(),CellType.STRING);
+        HSSFCell newCell = row.createCell(Math.max(row.getLastCellNum(), 0),CellType.STRING);
         newCell.setCellValue(value);
     }
 }

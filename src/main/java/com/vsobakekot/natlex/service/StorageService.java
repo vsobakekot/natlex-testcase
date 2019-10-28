@@ -8,7 +8,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -24,16 +23,16 @@ public class StorageService {
     private Path exportStorage;
 
     public void storeImportFile(MultipartFile file, String fileName) throws IOException {
-        Files.copy(file.getInputStream(), importStorage.resolve(fileName));
+        Files.copy(file.getInputStream(), importStorage.resolve(fileName).normalize());
     }
 
     public void storeExportFile(HSSFWorkbook hssfWorkbook, String fileName) throws IOException {
-        hssfWorkbook.write(new File(exportStorage + fileName));
+        hssfWorkbook.write(exportStorage.resolve(fileName).normalize().toFile());
     }
 
     public Resource loadFile(String fileName) {
         try {
-            Resource resource = new UrlResource(exportStorage.resolve(fileName).toUri());
+            Resource resource = new UrlResource(exportStorage.resolve(fileName).normalize().toUri());
             if(resource.exists()) {
                 return resource;
             } else {
